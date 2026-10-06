@@ -1,4 +1,4 @@
-export type UserRole = 'customer' | 'admin';
+export type UserRole = 'customer' | 'admin' | 'warehouse_manager';
 
 export interface Address {
   street: string;
@@ -14,6 +14,7 @@ export interface User {
   email: string;
   password?: string; // Hashed password
   role: UserRole;
+  assignedWarehouseId?: string; // For warehouse_manager
   phone?: string;
   address?: Address;
   createdAt: string;
@@ -25,6 +26,7 @@ export interface Warehouse {
   location: string;
   status: 'ACTIVE' | 'INACTIVE';
   capacity?: number;
+  managerName?: string;
   createdAt?: string;
 }
 
@@ -37,6 +39,8 @@ export interface Product {
   image: string;
   stockQuantity: number; // total stock across all active warehouses
   warehouseId?: string; // primary warehouse ID
+  sku?: string;
+  rating?: number;
   status: 'ACTIVE' | 'DISCONTINUED';
   createdAt: string;
   updatedAt: string;
@@ -62,17 +66,20 @@ export interface CartItem {
 }
 
 export type OrderStatus =
+  | 'PENDING'
   | 'PLACED'
   | 'CONFIRMED'
+  | 'PAYMENT_PENDING'
   | 'PROCESSING'
+  | 'PACKED'
   | 'SHIPPED'
   | 'OUT_FOR_DELIVERY'
   | 'DELIVERED'
   | 'CANCELLED';
 
-export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED';
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
 
-export type PaymentMethod = 'UPI' | 'Card' | 'Cash on Delivery';
+export type PaymentMethod = 'UPI' | 'Credit Card' | 'Debit Card' | 'Cash on Delivery';
 
 export interface WarehouseAllocation {
   warehouseId: string;
@@ -93,6 +100,7 @@ export interface WarehouseFulfillmentDetail {
   warehouseId: string;
   warehouseName: string;
   location: string;
+  status?: 'PENDING_PACKING' | 'PACKED' | 'SHIPPED' | 'DELIVERED';
   items: {
     productId: string;
     productName: string;
@@ -115,6 +123,7 @@ export interface Order {
   fulfillmentType: 'SINGLE_WAREHOUSE' | 'SPLIT_ORDER';
   fulfillmentDetails: WarehouseFulfillmentDetail[];
   notes?: string;
+  expectedDeliveryDate?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -135,16 +144,19 @@ export type NotificationType =
   | 'PAYMENT_SUCCESS'
   | 'PAYMENT_FAILED'
   | 'ORDER_CONFIRMED'
+  | 'ORDER_PACKED'
   | 'ORDER_SHIPPED'
   | 'ORDER_DELIVERED'
   | 'ORDER_CANCELLED'
   | 'STOCK_ALERT'
+  | 'WAREHOUSE_ASSIGNED'
   | 'SYSTEM';
 
 export interface Notification {
   notificationId: string;
   customerId: string;
   orderId?: string;
+  warehouseId?: string;
   message: string;
   type: NotificationType;
   isRead: boolean;
@@ -158,5 +170,7 @@ export interface DashboardStats {
   totalRevenue: number;
   lowStockProducts: number;
   pendingOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
   warehouseCount: number;
 }

@@ -15,16 +15,25 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
   switch (status) {
     // Order Statuses
     case 'PLACED':
+    case 'PENDING':
       colorClasses = 'bg-sky-50 text-sky-700 border-sky-200';
-      label = 'Placed';
+      label = 'Pending / Placed';
       break;
     case 'CONFIRMED':
       colorClasses = 'bg-indigo-50 text-indigo-700 border-indigo-200';
       label = 'Confirmed';
       break;
+    case 'PAYMENT_PENDING':
+      colorClasses = 'bg-amber-50 text-amber-700 border-amber-200';
+      label = 'Payment Pending';
+      break;
     case 'PROCESSING':
       colorClasses = 'bg-amber-50 text-amber-700 border-amber-200';
       label = 'Processing';
+      break;
+    case 'PACKED':
+      colorClasses = 'bg-cyan-50 text-cyan-700 border-cyan-200 font-semibold';
+      label = 'Packed at Hub';
       break;
     case 'SHIPPED':
       colorClasses = 'bg-purple-50 text-purple-700 border-purple-200';

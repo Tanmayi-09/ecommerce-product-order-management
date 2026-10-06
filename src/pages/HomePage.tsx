@@ -53,13 +53,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-            E-Commerce Product & Order Management System
+            Smart Shopping. Smarter Fulfillment.
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-            A production-ready full-stack REST API platform. Features intelligent multi-warehouse
-            stock routing, order lifecycle state machines, safe payment simulation, in-app
-            notifications, and catalog-grounded AI shopping assistance.
+            Discover products, track orders, and experience intelligent warehouse-based fulfillment
+            with real-time multi-hub inventory allocation across Hyderabad, Vijayawada, and Visakhapatnam.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -67,7 +66,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
               onClick={() => onNavigate('products')}
               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50"
             >
-              Explore Products
+              Shop Now
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -98,7 +97,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
             <div>
               <h4 className="text-sm font-semibold text-white">Multi-Warehouse Routing</h4>
               <p className="text-xs text-slate-400 mt-0.5">
-                Evaluates WH-01, WH-02, WH-03. Avoids order splitting unless stock requires it.
+                Evaluates WH-HYD, WH-VJA, WH-VSKP. Avoids order splitting unless stock requires it.
               </p>
             </div>
           </div>
@@ -120,9 +119,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-white">Role-Based Admin Hub</h4>
+              <h4 className="text-sm font-semibold text-white">Role-Based Portals</h4>
               <p className="text-xs text-slate-400 mt-0.5">
-                Advance orders to Shipped/Delivered, update inventory, and view analytics.
+                Customer shopping, Admin hub management, and Warehouse Manager fulfillment.
               </p>
             </div>
           </div>
@@ -133,61 +132,61 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
       <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         <div className="max-w-2xl mb-6">
           <span className="text-indigo-600 font-bold text-xs uppercase tracking-wider">
-            Key Architecture Feature (Section 8)
+            Key Architecture Feature (Section 5)
           </span>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-            Intelligent Multi-Warehouse Inventory Routing
+            Real-Time Inventory & Smart Multi-Warehouse Fulfillment
           </h2>
           <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
-            When an order is placed, the backend checks all warehouses containing the requested items
-            and selects the single best-fit warehouse to minimize shipping cost and delay. If no single
-            warehouse holds sufficient inventory, the algorithm splits the fulfillment across hubs.
+            When an order is placed, the backend checks product availability across all warehouses
+            and selects the minimum number of warehouses required for fulfillment, prioritizing
+            single-hub fulfillment and avoiding unnecessary order splitting.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/50">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-sm text-blue-900">WH-01 (West Hub)</span>
+              <span className="font-semibold text-sm text-blue-900">Warehouse A – Hyderabad</span>
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">
-                Mumbai
+                Telangana
               </span>
             </div>
             <p className="text-xs text-slate-600 mb-2">
-              Capacity: 10,000 units. Primary distribution hub for western and central regions.
+              Capacity: 15,000 units. Central distribution hub for Hyderabad urban corridor.
             </p>
-            <div className="text-[11px] font-mono text-slate-500 bg-white p-2 rounded border border-blue-100">
-              Stock: PROD-101 (5), PROD-104 (3), PROD-106 (2)
+            <div className="text-[11px] font-mono text-slate-600 bg-white p-2 rounded border border-blue-100">
+              PROD-101 (Laptop): 10 avail | PROD-102 (Mobile): 0 | PROD-104 (Keyboard): 3 avail
             </div>
           </div>
 
           <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-sm text-emerald-900">WH-02 (North Hub)</span>
+              <span className="font-semibold text-sm text-emerald-900">Warehouse B – Vijayawada</span>
               <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">
-                Delhi NCR
+                Andhra Pradesh
               </span>
             </div>
             <p className="text-xs text-slate-600 mb-2">
-              Capacity: 8,500 units. Specialized logistics for northern fulfillment corridors.
+              Capacity: 10,000 units. Auto Nagar logistics hub connecting coastal districts.
             </p>
-            <div className="text-[11px] font-mono text-slate-500 bg-white p-2 rounded border border-emerald-100">
-              Stock: PROD-101 (8), PROD-103 (8), PROD-104 (4)
+            <div className="text-[11px] font-mono text-slate-600 bg-white p-2 rounded border border-emerald-100">
+              PROD-101 (Laptop): 5 avail | PROD-102 (Mobile): 8 avail | PROD-104 (Keyboard): 0
             </div>
           </div>
 
           <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/50">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-sm text-purple-900">WH-03 (South Hub)</span>
+              <span className="font-semibold text-sm text-purple-900">Warehouse C – Visakhapatnam</span>
               <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-medium">
-                Bengaluru
+                Andhra Pradesh
               </span>
             </div>
             <p className="text-xs text-slate-600 mb-2">
-              Capacity: 12,000 units. High-tech apex center with automated sorting lines.
+              Capacity: 12,500 units. Port corridor apex depot with automated sorting.
             </p>
-            <div className="text-[11px] font-mono text-slate-500 bg-white p-2 rounded border border-purple-100">
-              Stock: PROD-101 (14), PROD-102 (20), PROD-105 (12)
+            <div className="text-[11px] font-mono text-slate-600 bg-white p-2 rounded border border-purple-100">
+              PROD-101 (Laptop): 2 avail | PROD-102 (Mobile): 2 avail | PROD-104 (Keyboard): 5 avail
             </div>
           </div>
         </div>
@@ -196,7 +195,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAssistan
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-500 shrink-0" />
             <span>
-              <strong>Try the Split Order Demo:</strong> Order 5 units of "Mechanical Tactile Keyboard RGB" (PROD-104). Since WH-02 has 4 and WH-01 has 3, the engine automatically splits fulfillment!
+              <strong>Verified Section 5 Problem Statement:</strong> An order of Laptop × 2, Mobile × 1, and Keyboard × 3 automatically generates a 2-warehouse fulfillment plan (Hyderabad for Laptop & Keyboard, Vijayawada for Mobile)!
             </span>
           </div>
           <button

@@ -35,15 +35,7 @@ export class WarehouseService {
     const warehouseMap = new Map(warehouses.map((w) => [w.warehouseId, w]));
 
     const plannedAllocations: AllocationResult['allocations'] = [];
-    const fulfillmentMap = new Map<
-      string,
-      {
-        warehouseId: string;
-        warehouseName: string;
-        location: string;
-        items: { productId: string; productName: string; quantity: number }[];
-      }
-    >();
+    const fulfillmentMap = new Map<string, WarehouseFulfillmentDetail>();
 
     let orderRequiresSplit = false;
 
@@ -138,6 +130,7 @@ export class WarehouseService {
             warehouseId: alloc.warehouseId,
             warehouseName: wh.warehouseName,
             location: wh.location,
+            status: 'PENDING_PACKING',
             items: [],
           });
         }

@@ -22,6 +22,7 @@ import { ProfilePage } from './pages/ProfilePage.tsx';
 import { LoginPage } from './pages/LoginPage.tsx';
 import { RegisterPage } from './pages/RegisterPage.tsx';
 import { ApiDocsPage } from './pages/ApiDocsPage.tsx';
+import { WarehouseManagerPage } from './pages/WarehouseManagerPage.tsx';
 
 // Admin Pages
 import { AdminDashboardPage } from './pages/AdminDashboardPage.tsx';
@@ -119,6 +120,9 @@ function MainLayout() {
               <RegisterPage onNavigate={handleNavigate} />
             )}
             {currentPage === 'api-docs' && <ApiDocsPage />}
+            {currentPage === 'warehouse-manager' && (
+              <WarehouseManagerPage onNavigate={handleNavigate} />
+            )}
           </>
         )}
       </main>

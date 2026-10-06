@@ -19,14 +19,11 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ onNavigate }) => {
 
   const categories = [
     'All',
-    'Laptops & Computers',
-    'Audio',
-    'Monitors',
+    'Electronics',
+    'Laptops',
+    'Mobiles',
     'Accessories',
-    'Chargers',
-    'Cameras',
-    'Wearables',
-    'Storage',
+    'Home Appliances',
   ];
 
   useEffect(() => {

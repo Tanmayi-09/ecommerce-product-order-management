@@ -2,5 +2,7 @@
   "name": "E-Commerce Product & Order Management System",
   "description": "Full-stack API-based e-commerce platform with multi-warehouse inventory routing, order fulfillment, payment simulation, and interactive API explorer.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

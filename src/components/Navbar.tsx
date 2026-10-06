@@ -13,6 +13,7 @@ import {
   Package,
   Layers,
   ChevronDown,
+  Building2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useCart } from '../context/CartContext.tsx';
@@ -29,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenAiAssistant,
 }) => {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, isWarehouseManager, logout } = useAuth();
   const { itemCount } = useCart();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
@@ -117,6 +118,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <ShieldAlert className="w-4 h-4" />
                 Admin Hub
+              </button>
+            )}
+
+            {(isWarehouseManager || isAdmin) && (
+              <button
+                onClick={() => onNavigate('warehouse-manager')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  currentPage === 'warehouse-manager'
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                    : 'text-amber-800 hover:bg-amber-50'
+                }`}
+              >
+                <Building2 className="w-4 h-4 text-amber-600" />
+                Warehouse Hub
               </button>
             )}
           </nav>
@@ -293,6 +308,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <Layers className="w-4 h-4" />
                       Admin Dashboard
+                    </button>
+                  )}
+
+                  {(isWarehouseManager || isAdmin) && (
+                    <button
+                      onClick={() => {
+                        onNavigate('warehouse-manager');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-3.5 py-2 hover:bg-amber-50 flex items-center gap-2 text-amber-700 text-xs font-medium"
+                    >
+                      <Building2 className="w-4 h-4" />
+                      Warehouse Operations
                     </button>
                   )}
 

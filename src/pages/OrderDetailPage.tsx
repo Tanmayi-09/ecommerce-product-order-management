@@ -119,6 +119,7 @@ export const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ orderId, onNav
     'PLACED',
     'CONFIRMED',
     'PROCESSING',
+    'PACKED',
     'SHIPPED',
     'OUT_FOR_DELIVERY',
     'DELIVERED',
@@ -260,15 +261,18 @@ export const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ orderId, onNav
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-indigo-600" />
-              <h3 className="font-bold text-sm text-slate-900">
-                Multi-Warehouse Dispatch Plan
+              <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wide">
+                FULFILLMENT PLAN
               </h3>
             </div>
-            <StatusBadge status={order.fulfillmentType} size="sm" />
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              Total Warehouses Used: {order.fulfillmentDetails?.length || 1}
+            </span>
           </div>
 
           <p className="text-xs text-slate-500">
-            Intelligent inventory routing determined fulfillment across {order.fulfillmentDetails?.length || 1} hub(s):
+            Intelligent multi-warehouse optimization routed this order across{' '}
+            {order.fulfillmentDetails?.length || 1} regional fulfillment center(s):
           </p>
 
           <div className="space-y-3">
@@ -279,19 +283,40 @@ export const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ orderId, onNav
                   className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">{f.warehouseName}</span>
-                    <span className="font-mono text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
-                      {f.warehouseId}
-                    </span>
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                        Warehouse:
+                      </span>
+                      <span className="font-extrabold text-slate-900 text-sm">
+                        {f.warehouseName}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-mono text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-bold">
+                        {f.warehouseId}
+                      </span>
+                      {f.status && (
+                        <span className="text-[10px] font-semibold text-purple-700 block mt-0.5">
+                          {f.status}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <p className="text-slate-500 text-[11px]">{f.location}</p>
 
-                  <div className="pt-2 border-t border-slate-200 text-[11px] space-y-1">
-                    <span className="font-semibold text-slate-600">Dispatched Items:</span>
+                  <div className="pt-2 border-t border-slate-200 text-xs space-y-1">
+                    <span className="font-bold text-slate-600 text-[11px] uppercase">
+                      Products Dispatched:
+                    </span>
                     {f.items.map((it, idx) => (
-                      <div key={idx} className="flex justify-between text-slate-800">
-                        <span>• {it.productName}</span>
-                        <span className="font-bold">{it.quantity} unit(s)</span>
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center bg-white p-1.5 rounded-lg border border-slate-200/60"
+                      >
+                        <span className="font-medium text-slate-800">• {it.productName}</span>
+                        <span className="font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md text-xs">
+                          {it.quantity} × unit(s)
+                        </span>
                       </div>
                     ))}
                   </div>

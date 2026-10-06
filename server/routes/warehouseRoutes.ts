@@ -139,4 +139,129 @@ router.delete('/:id', requireAdmin, (req: Request, res: Response) => {
   });
 });
 
+// GET /api/warehouses/:id/orders - Get orders assigned to a specific warehouse
+router.get('/:id/orders', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const allOrders = db.getOrders();
+
+  // Find orders where this warehouse participates in fulfillment
+  const assignedOrders = allOrders.filter((o) =>
+    o.fulfillmentDetails?.some((f) => f.warehouseId === id)
+  );
+
+  res.status(200).json({
+    success: true,
+    count: assignedOrders.length,
+    warehouseId: id,
+    orders: assignedOrders,
+  });
+});
+
+// PUT /api/warehouses/:id/fulfillments/:orderId/pack - Warehouse Manager packs order
+router.put('/:id/fulfillments/:orderId/pack', (req: Request, res: Response) => {
+  const { id, orderId } = req.params;
+  const order = db.getOrderById(orderId);
+
+  if (!order) {
+    res.status(404).json({ success: false, message: `Order ${orderId} not found.` });
+    return;
+  }
+
+  const fulfillment = order.fulfillmentDetails?.find((f) => f.warehouseId === id);
+  if (!fulfillment) {
+    res.status(404).json({ success: false, message: `Warehouse ${id} is not assigned to order ${orderId}.` });
+    return;
+  }
+
+  fulfillment.status = 'PACKED';
+
+  // Check if all fulfillment legs are now packed
+  const allPacked = order.fulfillmentDetails.every((f) => f.status === 'PACKED' || f.status === 'SHIPPED' || f.status === 'DELIVERED');
+  if (allPacked && order.orderStatus !== 'SHIPPED' && order.orderStatus !== 'DELIVERED') {
+    order.orderStatus = 'PACKED';
+  }
+
+  order.updatedAt = new Date().toISOString();
+  db.save();
+
+  db.addNotification({
+    customerId: order.customerId,
+    orderId: order.orderId,
+    warehouseId: id,
+    message: `Warehouse ${fulfillment.warehouseName} has PACKED your items for order ${order.orderId}.`,
+    type: 'ORDER_PACKED',
+    isRead: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: `Order ${orderId} marked as PACKED by warehouse ${id}.`,
+    order,
+  });
+});
+
+// PUT /api/warehouses/:id/fulfillments/:orderId/ship - Warehouse Manager dispatches order
+router.put('/:id/fulfillments/:orderId/ship', (req: Request, res: Response) => {
+  const { id, orderId } = req.params;
+  const order = db.getOrderById(orderId);
+
+  if (!order) {
+    res.status(404).json({ success: false, message: `Order ${orderId} not found.` });
+    return;
+  }
+
+  const fulfillment = order.fulfillmentDetails?.find((f) => f.warehouseId === id);
+  if (!fulfillment) {
+    res.status(404).json({ success: false, message: `Warehouse ${id} is not assigned to order ${orderId}.` });
+    return;
+  }
+
+  fulfillment.status = 'SHIPPED';
+
+  // Check if all legs are shipped
+  const allShipped = order.fulfillmentDetails.every((f) => f.status === 'SHIPPED' || f.status === 'DELIVERED');
+  if (allShipped && order.orderStatus !== 'DELIVERED') {
+    order.orderStatus = 'SHIPPED';
+  }
+
+  order.updatedAt = new Date().toISOString();
+  db.save();
+
+  db.addNotification({
+    customerId: order.customerId,
+    orderId: order.orderId,
+    warehouseId: id,
+    message: `Your package from ${fulfillment.warehouseName} has been SHIPPED (Order: ${order.orderId}).`,
+    type: 'ORDER_SHIPPED',
+    isRead: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: `Order ${orderId} marked as SHIPPED by warehouse ${id}.`,
+    order,
+  });
+});
+
+// PUT /api/warehouses/:id/stock/:productId - Warehouse Manager updates stock
+router.put('/:id/stock/:productId', (req: Request, res: Response) => {
+  const { id, productId } = req.params;
+  const { quantity } = req.body;
+
+  if (quantity === undefined || Number(quantity) < 0) {
+    res.status(400).json({ success: false, message: 'Valid positive quantity required.' });
+    return;
+  }
+
+  const inv = db.getInventoryRecord(productId, id);
+  const reserved = inv ? inv.reservedQuantity : 0;
+  const updatedInv = db.setInventoryStock(productId, id, Number(quantity), reserved);
+
+  res.status(200).json({
+    success: true,
+    message: `Stock updated for ${productId} at warehouse ${id}.`,
+    inventory: updatedInv,
+  });
+});
+
 export default router;

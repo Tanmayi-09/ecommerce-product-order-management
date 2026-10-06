@@ -88,6 +88,23 @@ export function requireAdmin(
   });
 }
 
+export function requireAdminOrWarehouseManager(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  requireAuth(req, res, () => {
+    if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'warehouse_manager')) {
+      res.status(403).json({
+        success: false,
+        message: 'Forbidden. Admin or Warehouse Manager privileges required.',
+      });
+      return;
+    }
+    next();
+  });
+}
+
 export function optionalAuth(
   req: AuthenticatedRequest,
   _res: Response,

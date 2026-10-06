@@ -127,6 +127,23 @@ export const api = {
       request<{ success: boolean; message: string }>(`/warehouses/${id}`, {
         method: 'DELETE',
       }),
+    getAssignedOrders: (warehouseId: string) =>
+      request<{ success: boolean; count: number; orders: Order[] }>(`/warehouses/${warehouseId}/orders`),
+    packOrder: (warehouseId: string, orderId: string) =>
+      request<{ success: boolean; message: string; order: Order }>(
+        `/warehouses/${warehouseId}/fulfillments/${orderId}/pack`,
+        { method: 'PUT' }
+      ),
+    shipOrder: (warehouseId: string, orderId: string) =>
+      request<{ success: boolean; message: string; order: Order }>(
+        `/warehouses/${warehouseId}/fulfillments/${orderId}/ship`,
+        { method: 'PUT' }
+      ),
+    updateStock: (warehouseId: string, productId: string, quantity: number) =>
+      request<{ success: boolean; message: string; inventory: Inventory }>(
+        `/warehouses/${warehouseId}/stock/${productId}`,
+        { method: 'PUT', body: JSON.stringify({ quantity }) }
+      ),
   },
 
   // Inventory

@@ -68,21 +68,25 @@ router.get('/system/test-suite', (_req: Request, res: Response) => {
     };
   });
 
-  // Test 3: Admin Role Validation
+  // Test 3: Admin & Warehouse Manager Role Validation
   runTest('Role-Based Access Control (RBAC)', 'Authorization', () => {
-    const admin = db.getUserByEmail('admin@ecommerce.com');
-    const customer = db.getUserByEmail('john@example.com');
-    const passed = admin?.role === 'admin' && customer?.role === 'customer';
+    const admin = db.getUserByEmail('admin@example.com');
+    const customer = db.getUserByEmail('customer@example.com');
+    const wm = db.getUserByEmail('warehouse@example.com');
+    const passed =
+      admin?.role === 'admin' &&
+      customer?.role === 'customer' &&
+      wm?.role === 'warehouse_manager';
     return {
       passed,
-      details: `Admin role: ${admin?.role}, Customer role: ${customer?.role}. Correctly partitioned.`,
+      details: `Admin: ${admin?.role}, Customer: ${customer?.role}, Warehouse Manager: ${wm?.role}. Correctly partitioned.`,
     };
   });
 
   // Test 4: Single Warehouse Fulfillment Preference
   runTest('Single Warehouse Routing (No Splitting)', 'Multi-Warehouse', () => {
-    // PROD-101 has WH-01: 5, WH-02: 8, WH-03: 14
-    // If requesting 6 units, WH-02 (8) or WH-03 (14) can fulfill completely.
+    // PROD-101 has WH-HYD: 10, WH-VJA: 5, WH-VSKP: 2
+    // If requesting 6 units, WH-HYD (10) can fulfill completely without splitting.
     const plan = WarehouseService.planAllocation([{ productId: 'PROD-101', quantity: 6 }]);
     const passed =
       plan.success &&
@@ -99,19 +103,19 @@ router.get('/system/test-suite', (_req: Request, res: Response) => {
 
   // Test 5: Intelligent Split Fulfillment
   runTest('Split Order Multi-Warehouse Routing', 'Multi-Warehouse', () => {
-    // PROD-104 has WH-01: 3, WH-02: 4, WH-03: 0. Total = 7.
-    // Requesting 5 units cannot fit into WH-01 (3) or WH-02 (4) alone.
-    // It MUST split across WH-02 (4) and WH-01 (1).
-    const plan = WarehouseService.planAllocation([{ productId: 'PROD-104', quantity: 5 }]);
+    // PROD-104 has WH-HYD: 3, WH-VJA: 0, WH-VSKP: 5. Total = 8.
+    // Requesting 6 units cannot fit into WH-HYD (3) or WH-VSKP (5) alone.
+    // It MUST split across WH-VSKP (5) and WH-HYD (1).
+    const plan = WarehouseService.planAllocation([{ productId: 'PROD-104', quantity: 6 }]);
     const passed =
       plan.success &&
       plan.isSplit &&
       plan.fulfillmentDetails.length > 1 &&
-      plan.allocations[0].warehouseFulfillments.reduce((sum, w) => sum + w.quantity, 0) === 5;
+      plan.allocations[0].warehouseFulfillments.reduce((sum, w) => sum + w.quantity, 0) === 6;
     return {
       passed,
       details: passed
-        ? `Correctly split 5 units across ${plan.fulfillmentDetails.length} warehouses (${plan.fulfillmentDetails.map((f) => `${f.warehouseName}: ${f.items[0].quantity}`).join(', ')}).`
+        ? `Correctly split 6 units across ${plan.fulfillmentDetails.length} warehouses (${plan.fulfillmentDetails.map((f) => `${f.warehouseName}: ${f.items[0].quantity}`).join(', ')}).`
         : `Failed: ${plan.message}`,
     };
   });

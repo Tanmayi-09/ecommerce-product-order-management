@@ -8,10 +8,11 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAdmin: boolean;
+  isWarehouseManager: boolean;
   login: (email: string, password?: string) => Promise<boolean>;
   register: (userData: any) => Promise<boolean>;
   logout: () => void;
-  switchDemoUser: (target: 'admin' | 'john' | 'sarah' | 'raj') => Promise<void>;
+  switchDemoUser: (target: 'customer' | 'admin' | 'warehouse' | 'john' | 'sarah') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,18 +36,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return;
           }
         } catch {
-          // Token expired or invalid
           localStorage.removeItem('auth_token');
           setToken(null);
           setUser(null);
         }
       }
 
-      // If no valid session, auto-login as demo customer John Doe for seamless first-load demo!
+      // If no valid session, auto-login as customer@example.com for instant review
       try {
         const demoRes = await api.auth.login({
-          email: 'john@example.com',
-          password: 'customer123',
+          email: 'customer@example.com',
+          password: 'Customer@123',
         });
         if (demoRes.success) {
           localStorage.setItem('auth_token', demoRes.token);
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
-  const login = async (email: string, password = 'customer123'): Promise<boolean> => {
+  const login = async (email: string, password = 'Customer@123'): Promise<boolean> => {
     try {
       setIsLoading(true);
       const res = await api.auth.login({ email, password });
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('auth_token', res.token);
         setToken(res.token);
         setUser(res.user);
-        success(`Welcome back, ${res.user.name}!`);
+        success(`Welcome, ${res.user.name} (${res.user.role.toUpperCase()})!`);
         return true;
       }
       return false;
@@ -110,12 +110,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     success('Logged out successfully.');
   };
 
-  const switchDemoUser = async (target: 'admin' | 'john' | 'sarah' | 'raj') => {
+  const switchDemoUser = async (target: 'customer' | 'admin' | 'warehouse' | 'john' | 'sarah') => {
     const creds: Record<string, { email: string; pass: string }> = {
-      admin: { email: 'admin@ecommerce.com', pass: 'admin123' },
-      john: { email: 'john@example.com', pass: 'customer123' },
-      sarah: { email: 'sarah@example.com', pass: 'customer123' },
-      raj: { email: 'raj@example.com', pass: 'customer123' },
+      customer: { email: 'customer@example.com', pass: 'Customer@123' },
+      admin: { email: 'admin@example.com', pass: 'Admin@123' },
+      warehouse: { email: 'warehouse@example.com', pass: 'Warehouse@123' },
+      john: { email: 'john@example.com', pass: 'Customer@123' },
+      sarah: { email: 'sarah@example.com', pass: 'Customer@123' },
     };
 
     const chosen = creds[target];
@@ -131,6 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         isLoading,
         isAdmin: user?.role === 'admin',
+        isWarehouseManager: user?.role === 'warehouse_manager',
         login,
         register,
         logout,
